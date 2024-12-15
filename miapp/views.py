@@ -33,5 +33,5 @@ def love_page(request):
             },
         ],
     }
-    return render(request, 'miapp/love_page.html', context)
+    return render(request, 'miapp/index.html', context)
 
