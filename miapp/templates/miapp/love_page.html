@@ -1,0 +1,373 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+        {% load static %}
+        <title>Para el amor de mi vida</title>
+        <style>
+            /* Base styles remain the same */
+            body {
+                font-family: 'Arial', sans-serif;
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+                background: linear-gradient(135deg, #ffccd5 0%, #ff99ac 100%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow-x: hidden;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 2rem auto;
+                padding: 2rem;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 20px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                text-align: center;
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Existing styles */
+            h1 {
+                color: #ff4d6d;
+                font-size: 2.5rem;
+                margin-bottom: 1.5rem;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+                animation: titleGlow 2s ease-in-out infinite;
+            }
+
+            .message {
+                font-size: 1.2rem;
+                color: #444;
+                margin: 1rem 0;
+                padding: 1.5rem;
+                border: 2px solid #ff99ac;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                background: linear-gradient(45deg, #fff1f2, #ffe4e6);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .message:hover {
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+            }
+
+            /* Improved timer styles */
+            .timer-container {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #fff5f6 0%, #ffe4e6 100%);
+                padding: 1.5rem;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(255, 77, 109, 0.2);
+                z-index: 2;
+                text-align: center;
+                min-width: 200px;
+                border: 2px solid rgba(255, 77, 109, 0.3);
+            }
+
+            .timer-container h3 {
+                color: #ff4d6d;
+                margin: 0 0 10px 0;
+                font-size: 1.4rem;
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            }
+
+            .timer {
+                display: flex;
+                justify-content: center;
+                gap: 15px;
+                color: #ff4d6d;
+                margin: 0;
+            }
+
+            .time-unit {
+                text-align: center;
+            }
+
+            .time-value {
+                font-size: 1.8rem;
+                font-weight: bold;
+                margin: 0;
+                line-height: 1;
+            }
+
+            .time-label {
+                font-size: 0.8rem;
+                color: #ff758f;
+                margin-top: 5px;
+            }
+
+            /* Modal styles */
+            .love-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 1000;
+            }
+
+            .love-modal.active {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .modal-content {
+                background: linear-gradient(135deg, #fff5f6 0%, #ffe4e6 100%);
+                padding: 2rem;
+                width: 90%;
+                max-width: 600px;
+                border-radius: 20px;
+                box-shadow: 0 0 30px rgba(255, 77, 109, 0.3);
+                position: relative;
+            }
+
+            .modal-image {
+                width: 100%;
+                max-height: 400px;
+                object-fit: cover;
+                border-radius: 10px;
+                margin-bottom: 1rem;
+            }
+
+            .modal-text {
+                font-size: 1.3rem;
+                color: #ff4d6d;
+                margin: 1rem 0;
+                text-align: center;
+            }
+
+            .close-modal {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                font-size: 2rem;
+                color: #ff4d6d;
+                cursor: pointer;
+                transition: transform 0.3s ease;
+                text-decoration: none;
+            }
+
+            .close-modal:hover {
+                transform: rotate(90deg);
+            }
+
+            /* Animated drawings and messages styles remain the same */
+            .animated-drawing {
+                position: fixed;
+                width: 100px;
+                height: 100px;
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            .love-message {
+                position: fixed;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 1rem;
+                border-radius: 15px;
+                box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+                z-index: 2;
+                animation: float 6s ease-in-out infinite;
+            }
+
+            @keyframes titleGlow {
+                0%, 100% { text-shadow: 0 0 5px #ff4d6d; }
+                50% { text-shadow: 0 0 20px #ff4d6d; }
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0) rotate(0deg); }
+                50% { transform: translateY(-20px) rotate(20deg); }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Timer Container -->
+        <div class="timer-container">
+            <h3>Tiempo Juntos</h3>
+            <div class="timer" id="loveTimer">
+                <div class="time-unit">
+                    <p class="time-value" id="days">0</p>
+                    <p class="time-label">Días</p>
+                </div>
+                <div class="time-unit">
+                    <p class="time-value" id="hours">0</p>
+                    <p class="time-label">Horas</p>
+                </div>
+                <div class="time-unit">
+                    <p class="time-value" id="minutes">0</p>
+                    <p class="time-label">Min</p>
+                </div>
+                <div class="time-unit">
+                    <p class="time-value" id="seconds">0</p>
+                    <p class="time-label">Seg</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="container">
+            <h1>💖 Para {{ nombre_novia }} 💖</h1>
+
+            <div id="messages">
+                {% for mensaje in mensajes_amor %}
+                <div class="message" data-image="{% static mensaje.imagen %}" data-text="{{ mensaje.texto }}">
+                    {{ mensaje.texto }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="footer">
+                <p>Cada día desde aquel {{ fecha_inicio }} ha sido especial gracias a ti</p>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="love-modal" id="loveModal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <img class="modal-image" src="" alt="Momento especial">
+                <div class="modal-text"></div>
+            </div>
+        </div>
+
+        <script>
+            // Modal functionality
+            const modal = document.getElementById('loveModal');
+            const modalImage = modal.querySelector('.modal-image');
+            const modalText = modal.querySelector('.modal-text');
+            const closeBtn = modal.querySelector('.close-modal');
+
+            // Event listeners for messages
+            document.querySelectorAll('.message').forEach(message => {
+                message.addEventListener('click', () => {
+                    const imagePath = message.getAttribute('data-image');
+                    const messageText = message.getAttribute('data-text');
+                    
+                    modalImage.src = imagePath;
+                    modalText.textContent = messageText;
+                    modal.classList.add('active');
+                });
+            });
+
+            // Close modal when clicking close button or outside
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+
+            // Timer functionality
+            function updateTimer() {
+                const startDate = new Date('2024-05-24');
+                const now = new Date();
+                const diff = now - startDate;
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = days;
+                document.getElementById('hours').textContent = hours;
+                document.getElementById('minutes').textContent = minutes;
+                document.getElementById('seconds').textContent = seconds;
+            }
+
+            setInterval(updateTimer, 1000);
+            updateTimer();
+
+            // Animated drawings and messages
+            const loveDrawings = [
+                '❤️', '💑', '💏', '💖', '💘', '💝', '🎀', '🌹'
+            ];
+
+            const loveMessages = [
+        'Eres la razón de mi sonrisa',
+        'Mi vida tiene sentido contigo',
+        'Cada día a tu lado es un regalo',
+        'Eres mi mejor sueño hecho realidad',
+        'No hay nadie como tú en este mundo',
+        'Me completas de una manera perfecta',
+        'Eres mi refugio en este mundo caótico',
+        'Cada segundo contigo vale una eternidad',
+        'Eres mi luz en la oscuridad',
+        'Mi corazón late solo por ti',
+        'Tu amor es mi mayor bendición',
+        'Eres mi pasado, presente y futuro',
+        'No puedo imaginar mi vida sin ti',
+        'Gracias por ser mi razón para luchar',
+        'Eres el latido de mi corazón',
+        'Mi amor por ti es infinito',
+        'Juntos somos invencibles',
+        'Eres mi sueño hecho realidad',
+        'No puedo dejar de pensar en ti',
+        'Tu amor llena mi vida de color',
+        'Eres mi melodía favorita',
+        'Todo lo que soy es gracias a ti',
+        'Contigo todo es mejor',
+        'Eres mi estrella en el cielo',
+        'Me haces creer en el amor verdadero',
+        'Cada día contigo es una aventura',
+        'Tu risa es mi sonido favorito',
+        'Eres mi persona para siempre',
+        'El amor se inventó pensando en nosotros',
+        'Tú eres mi hogar donde quiera que estés'
+    ];
+
+
+            function createAnimatedDrawing() {
+                const drawing = document.createElement('div');
+                drawing.className = 'animated-drawing';
+                drawing.innerHTML = loveDrawings[Math.floor(Math.random() * loveDrawings.length)];
+                drawing.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+                drawing.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+                drawing.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                document.body.appendChild(drawing);
+
+                const animation = drawing.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: 'translateY(-100px) rotate(360deg)', opacity: 0 }
+                ], {
+                    duration: 3000,
+                    easing: 'ease-out'
+                });
+
+                animation.onfinish = () => drawing.remove();
+            }
+
+            function createLoveMessage() {
+                const message = document.createElement('div');
+                message.className = 'love-message';
+                message.textContent = loveMessages[Math.floor(Math.random() * loveMessages.length)];
+                message.style.left = Math.random() * (window.innerWidth - 200) + 'px';
+                message.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+                document.body.appendChild(message);
+
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 1000);
+                }, 4000);
+            }
+
+            // Create animated elements periodically
+            setInterval(createAnimatedDrawing, 2000);
+            setInterval(createLoveMessage, 5000);
+        </script>
+    </body>
+    </html>
